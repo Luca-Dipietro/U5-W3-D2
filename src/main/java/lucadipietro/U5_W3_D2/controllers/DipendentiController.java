@@ -3,6 +3,7 @@ package lucadipietro.U5_W3_D2.controllers;
 import lucadipietro.U5_W3_D2.entities.Dipendente;
 import lucadipietro.U5_W3_D2.exceptions.BadRequestException;
 import lucadipietro.U5_W3_D2.payloads.DipendentiDTO;
+import lucadipietro.U5_W3_D2.payloads.RuoloDTO;
 import lucadipietro.U5_W3_D2.services.DipendentiService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -69,6 +70,12 @@ public class DipendentiController {
     @PreAuthorize("hasAuthority('CAPO_REPARTO')")
     public void findByIdAndDelete(@PathVariable UUID dipendenteId){
         this.dipendentiService.findByIdAndDelete(dipendenteId);
+    }
+
+    @PatchMapping("/{dipendenteId}/role")
+    @PreAuthorize("hasAuthority('CAPO_REPARTO')")
+    public Dipendente updateRole(@PathVariable UUID id, @RequestBody RuoloDTO ruolo) {
+        return dipendentiService.updateRole(id, ruolo);
     }
 
     @PatchMapping("/{dipendenteId}/avatar")

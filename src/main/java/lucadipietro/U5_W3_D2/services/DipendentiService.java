@@ -3,9 +3,11 @@ package lucadipietro.U5_W3_D2.services;
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
 import lucadipietro.U5_W3_D2.entities.Dipendente;
+import lucadipietro.U5_W3_D2.enums.RuoloDipendente;
 import lucadipietro.U5_W3_D2.exceptions.BadRequestException;
 import lucadipietro.U5_W3_D2.exceptions.NotFoundException;
 import lucadipietro.U5_W3_D2.payloads.DipendentiDTO;
+import lucadipietro.U5_W3_D2.payloads.RuoloDTO;
 import lucadipietro.U5_W3_D2.repositories.DipendentiRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -74,6 +76,12 @@ public class DipendentiService {
 
     public Dipendente findByEmail(String email) {
         return this.dipendentiRepository.findByEmail(email).orElseThrow(() -> new NotFoundException("Utente con email " + email + " non trovato!"));
+    }
+
+    public Dipendente updateRole(UUID id, RuoloDTO ruolo) {
+        Dipendente found = findById(id);
+        found.setRuolo(RuoloDipendente.valueOf(ruolo.ruolo().toUpperCase()));
+        return dipendentiRepository.save(found);
     }
 
     public Dipendente uploadImage(UUID dipendenteId, MultipartFile file) throws IOException {
