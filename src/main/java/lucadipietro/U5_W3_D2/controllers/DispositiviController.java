@@ -7,6 +7,7 @@ import lucadipietro.U5_W3_D2.services.DispositiviService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -26,6 +27,7 @@ public class DispositiviController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize("hasAuthority('CAPO_REPARTO')")
     public Dispositivo saveDispositivo(@RequestBody @Validated DispositiviDTO body, BindingResult validationResult){
         if(validationResult.hasErrors()){
             throw new BadRequestException(validationResult.getAllErrors());
@@ -40,6 +42,7 @@ public class DispositiviController {
     }
 
     @PutMapping("/{dispositivoId}")
+    @PreAuthorize("hasAuthority('CAPO_REPARTO')")
     public Dispositivo findByIdAndUpdate(@PathVariable UUID dispositivoId, @RequestBody @Validated DispositiviDTO body, BindingResult validationResult){
         if(validationResult.hasErrors()){
             throw new BadRequestException(validationResult.getAllErrors());
@@ -50,11 +53,13 @@ public class DispositiviController {
 
     @DeleteMapping("/{dispositivoId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PreAuthorize("hasAuthority('CAPO_REPARTO')")
     public void findByIdAndDelete(@PathVariable UUID dispositivoId){
         this.dispositiviService.findByIdAndDelete(dispositivoId);
     }
 
     @PatchMapping("/{dispositivoId}/assegna")
+    @PreAuthorize("hasAuthority('CAPO_REPARTO')")
     public Dispositivo assegnaDispositivo(@PathVariable UUID dispositivoId,@RequestParam("dipendenteId") UUID dipendenteId){
         return this.dispositiviService.assegna(dispositivoId,dipendenteId);
     }
