@@ -34,4 +34,9 @@ public class JWTTokenConfiguration {
             throw new UnauthorizedException("Errore col token, preghiamo di riprovare a fare il login!"); // Se la verifica fallisce, lancia un'eccezione di non autorizzato con status 401
         }
     }
+
+    public String extractIdFromToken(String token){
+        return Jwts.parser().verifyWith(Keys.hmacShaKeyFor(secret.getBytes())).build()
+                .parseSignedClaims(token).getPayload().getSubject();
+    }
 }

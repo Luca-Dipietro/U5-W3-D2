@@ -12,6 +12,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -25,6 +26,9 @@ public class DipendentiService {
 
     @Autowired
     private Cloudinary cloudinaryUploader;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     public Page<Dipendente> getDipendenti(int pageNumber, int pageSize, String sortBy){
         if(pageSize > 50) pageSize = 50;
@@ -43,7 +47,7 @@ public class DipendentiService {
                     throw new BadRequestException("Esiste già un dipendente con questa email " + body.email());
                 }
         );
-        Dipendente newDipendente = new Dipendente(body.username(), body.password(), body.nome(), body.cognome(), body.email());
+        Dipendente newDipendente = new Dipendente(body.username(), passwordEncoder.encode(body.password()), body.nome(), body.cognome(), body.email());
         newDipendente.setAvatar("https://ui-avatars.com/api/?name=" + body.nome() + "+" + body.cognome());
         return this.dipendentiRepository.save(newDipendente);
     }
@@ -55,6 +59,7 @@ public class DipendentiService {
     public Dipendente findByIdAndUpdate(UUID dipendenteId, DipendentiDTO body){
         Dipendente found = this.findById(dipendenteId);
         found.setUsername(body.username());
+        found.setPassword(passwordEncoder.encode(body.password()));
         found.setNome(body.nome());
         found.setCognome(body.cognome());
         found.setEmail(body.email());
